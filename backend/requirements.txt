@@ -19,3 +19,4 @@ uvloop==0.16.0
 watchgod==0.7
 websockets==9.1
 psycopg2-binary==2.8.6
+lxml>=4.6.5
