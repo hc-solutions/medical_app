@@ -76,6 +76,12 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_PASSWORD: str = "qwerty"
     USERS_OPEN_REGISTRATION: bool = True
 
+    AUTH_SERVER_URL = "http://localhost:80"
+    INTERNAL_AUTH_SERVER_URL = "http://keycloak:8080/auth/"
+    AUTH_CLIENT_ID = "backend-client-id"
+    AUTH_REALM = "backend-realm"
+    AUTH_CLIENT_SECRET = "backend-client-secret"
+
     class Config:
         case_sensitive = True
 
