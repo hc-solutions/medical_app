@@ -1,4 +1,4 @@
-version: "2.2"
+version: "3"
 services:
   medical_db:
     image: postgres:12
@@ -11,7 +11,7 @@ services:
     expose:
       - "5432"
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:5433:5432"
 
   queue:
     image: rabbitmq:3
@@ -33,11 +33,12 @@ services:
       - "127.0.0.1:8989:8000"
     expose:
       - "8000"
+
   frontend:
     build:
       context: ./frontend
     ports:
-      - "127.0.0.1:80:80"
+      - "127.0.0.1:81:80"
 
   search:
     image: getmeili/meilisearch:v0.23.1
@@ -53,9 +54,61 @@ services:
     ports:
       - "127.0.0.1:7700:7700"
 
+  keycloak_postgres:
+    image: 'postgres:alpine'
+    volumes:
+      - keycloak_postgres:/var/lib/postgresql/data
+    restart: 'always'
+    ports:
+      - "5434:5433"
+    environment:
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: keycloak
+      POSTGRES_HOST: keycloak_postgres
+      POSTGRES_PORT: 5433
+
+  traefik:
+    image: library/traefik:alpine
+    container_name: traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: >
+      --logLevel=ERROR
+      --api.dashboard
+      --docker
+      --entrypoints="Name:http Address::80"
+      --defaultentrypoints="http"
+    ports:
+      - "80:80"
+      - "3000:8080"
+
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: keycloak_postgres
+      DB_PORT: 5433
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: Pa55w0rd
+      KEYCLOAK_LOGLEVEL: DEBUG
+      JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
+      JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=500,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))"
+    depends_on:
+      - keycloak_postgres
+    labels:
+      traefik.enable: true
+      traefik.port: 8080
+      traefik.protocol: http
+      traefik.frontend.rule: Host:localhost
+      traefik.frontend.passHostHeader: true
+      # traefik.backend.loadbalancer.stickiness: true
+
 volumes:
   app-db-data:
   meilidate:
-
-networks:
-  medical_network:
+  keycloak_postgres:
+    driver: local
