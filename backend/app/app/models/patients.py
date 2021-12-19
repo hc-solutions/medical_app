@@ -64,7 +64,7 @@ class Procedures(Base):
 
     __tablename__ = "procedures"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String, nullable=False)
+    title = Column(String, nullable=False, unique=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
 
 

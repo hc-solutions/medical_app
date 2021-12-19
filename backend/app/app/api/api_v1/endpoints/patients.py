@@ -20,7 +20,7 @@ def read_patients(
 
 
 @router.post("/", response_model=schemas.Patient)
-def create_item(
+def create_patient_in_db(
     *,
     db: Session = Depends(deps.get_db),
     item_in: schemas.PatientCreate,

@@ -17,7 +17,12 @@ class WarehouseTypes(Base):
 
 
 class MedicalItems(Base):
-    """Various Medical items, from pills to scissors"""
+    """Various Medical items, from pills to scissors
+
+    param unit: e.g. mg or ml
+    param capacity: e.g. 2 mg in pill
+    param amount: e.g. 10 pills in a pack
+    """
 
     __tablename__ = "medical_items"
     id = Column(Integer, primary_key=True, autoincrement=True)
