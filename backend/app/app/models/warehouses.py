@@ -31,6 +31,7 @@ class MedicalItems(Base):
     unit = Column(String, nullable=False)
     capacity = Column(Float, nullable=False)
     amount = Column(Integer, nullable=False)
+    expires_in_days = Column(Integer, nullable=False)
 
 
 class MedicalCompositions(Base):

@@ -1,10 +1,19 @@
+import datetime
 import uuid
+from typing import Optional, List
 
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import and_, func
 from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
-from app.models.patients import Patients
+from app.models.patients import (
+    Patients,
+    Procedures,
+    MedicalRecords,
+    ProceduresRecords,
+    PatientAppointments,
+)
 from app.schemas import PatientCreate, PatientUpdate
 
 
@@ -31,6 +40,44 @@ class CRUDPatient(CRUDBase[Patients, PatientCreate, PatientUpdate]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
+
+    @staticmethod
+    def patient_procedures(
+        db: Session, patient_id: int, will_expire_in: int
+    ) -> Optional[List[Procedures]]:
+        return (
+            db.query(
+                Procedures.id,
+                Procedures.title,
+                ProceduresRecords.created_at,
+                Procedures.expires_in_days,
+                ProceduresRecords.expires_at,
+            )
+            .join(ProceduresRecords, Procedures.id == ProceduresRecords.procedure_id)
+            .join(MedicalRecords, ProceduresRecords.record_id == MedicalRecords.id)
+            .filter(
+                and_(
+                    MedicalRecords.patient_id == patient_id,
+                    func.date(ProceduresRecords.expires_at)
+                    <= datetime.date.today() + datetime.timedelta(days=will_expire_in),
+                    func.date(ProceduresRecords.expires_at) >= datetime.date.today(),
+                )
+            )
+            .all()
+        )
+
+    @staticmethod
+    def patient_appointments(
+        db: Session, *, patient_id: int, skip: int = 0, limit: int = 100
+    ) -> List[PatientAppointments]:
+        return (
+            db.query(PatientAppointments)
+            .join(MedicalRecords, PatientAppointments.record_id == MedicalRecords.id)
+            .filter(MedicalRecords.patient_id == patient_id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
 
 patient = CRUDPatient(Patients)

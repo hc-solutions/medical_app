@@ -9,6 +9,7 @@ class MedicalItemBase(BaseModel):
     unit: str
     capacity: float
     amount: int
+    expires_in_days: Optional[int]
 
 
 class MedicalItemBaseCreate(MedicalItemBase):

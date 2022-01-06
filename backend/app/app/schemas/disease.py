@@ -8,7 +8,6 @@ class DiseaseBase(BaseModel):
     code: str
     title: str
     source: int
-    is_actual: Optional[bool] = True
     created_at: Optional[datetime.datetime] = datetime.datetime.now()
 
 

@@ -32,6 +32,11 @@ class Procedure(ProcedureInDBBase):
     pass
 
 
+class ProcedureWithExp(ProcedureInDBBase):
+    expires_in_days: int
+    expires_at: datetime.date
+
+
 # Additional properties stored in DB
 class ProcedureInDB(ProcedureInDBBase):
     created_at: Optional[datetime.datetime]
