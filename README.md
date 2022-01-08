@@ -1,6 +1,7 @@
 Чтобы все заработало, необходимо добавить эти строчки в свой hosts файл
 
-На Linux и MacOS они находятся в `/etc/hosts` 
+На Linux и MacOS они находятся в `/etc/hosts`
+На Windows они находятся в  `c:\Windows\System32\Drivers\etc\hosts`
 
 ```
 127.0.0.1 hc-solutions.local
