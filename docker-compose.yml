@@ -1,4 +1,5 @@
-version: "3"
+version: "2.7"
+
 services:
   medical_db:
     image: postgres:12
@@ -10,8 +11,6 @@ services:
       - POSTGRES_DB=medical
     expose:
       - "5432"
-    ports:
-      - "127.0.0.1:5433:5432"
 
   queue:
     image: rabbitmq:3
@@ -24,21 +23,17 @@ services:
     build:
       context: ./backend
       dockerfile: backend.dockerfile
+    expose:
+      - "8000"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=medical_postgres_password
       - POSTGRES_SERVER=medical_db
       - POSTGRES_DB=medical
-    ports:
-      - "127.0.0.1:8989:8000"
-    expose:
-      - "8000"
-
-  frontend:
-    build:
-      context: ./frontend
-    ports:
-      - "127.0.0.1:81:80"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.backend.entrypoints: web
+      traefik.http.routers.backend.rule: Host(`api.hc-solutions.local`)
 
   search:
     image: getmeili/meilisearch:v0.23.1
@@ -51,16 +46,16 @@ services:
       MEILI_LOG_LEVEL: "WARN"
     expose:
       - "7700"
-    ports:
-      - "127.0.0.1:7700:7700"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.search.entrypoints: web
+      traefik.http.routers.search.rule: Host(`ms.hc-solutions.local`)
 
   keycloak_postgres:
     image: postgres:12
     volumes:
       - keycloak_postgres:/var/lib/postgresql/data
     restart: 'always'
-    ports:
-      - "5434:5433"
     expose:
       - "5433"
     environment:
@@ -72,19 +67,30 @@ services:
       - PGPORT=5433
 
   traefik:
-    image: library/traefik:alpine
-    container_name: traefik
+    image: traefik:v2.6
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: >
-      --logLevel=ERROR
-      --api.dashboard
-      --docker
-      --entrypoints="Name:http Address::80"
-      --defaultentrypoints="http"
+    restart: always
+    command:
+      # api
+      - --api.insecure=true
+      - --api.dashboard=true
+      - --api.debug=true
+      # general logs
+      - --log.level=DEBUG
+      # set providers
+      - --providers.docker=true                   # docker is a provider
+      # - --providers.docker.network=medical        # only look at containers this network
+      - --providers.docker.exposedbydefault=false # each container needs to be explicitly enabled to be seen by traefik (- "traefik.enable=true")
+      # set entrypoints
+      - --entrypoints.web.address=:80
+    labels:
+      traefik.enable: true # <== Enable traefik on itself to view dashboard and assign subdomain to view it
+      traefik.http.routers.traefik.rule: Host(`traefik.hc-solutions.local`)
+      traefik.http.services.traefik.loadbalancer.server.port: 8080
+
     ports:
       - "80:80"
-      - "3000:8080"
 
   keycloak:
     image: jboss/keycloak
@@ -104,17 +110,30 @@ services:
       - keycloak_postgres
     expose:
       - "8080"
-    links:
-      - backend
     labels:
       traefik.enable: true
-      traefik.port: 8080
-      traefik.protocol: http
-      traefik.frontend.rule: Host:localhost
-      traefik.frontend.passHostHeader: true
-      # traefik.backend.loadbalancer.stickiness: true
+      traefik.http.routers.keycloak.entrypoints: web
+      traefik.http.routers.keycloak.rule: Host(`auth.hc-solutions.local`)
+
+  nextjs:
+    build:
+      context: next-frontend/
+      dockerfile: Dockerfile
+    volumes:
+      - ./next-frontend/:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+    expose:
+      - "9000"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.nextjs.entrypoints: web
+      traefik.http.routers.nextjs.rule: Host(`hc-solutions.local`)
 
 volumes:
   app-db-data:
   meilidate:
   keycloak_postgres:
+
+networks:
+  default:
