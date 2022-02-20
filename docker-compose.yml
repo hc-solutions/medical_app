@@ -123,11 +123,11 @@ services:
       - ./frontend:/app
       - /app/node_modules
     expose:
-      - "9000"
+      - "3000"
     labels:
       traefik.enable: true
-      traefik.http.routers.nextjs.entrypoints: web
-      traefik.http.routers.nextjs.rule: Host(`hc-solutions.local`)
+      traefik.http.routers.frontend.entrypoints: web
+      traefik.http.routers.frontend.rule: Host(`hc-solutions.local`)
 
 volumes:
   app-db-data:

@@ -12,11 +12,9 @@ class Settings(BaseSettings):
     SERVER_NAME: str = "medical"
     SERVER_HOST: AnyHttpUrl = "http://127.0.0.1"
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://127.0.0.1:8989",
-        "http://127.0.0.1:81",
-        "http://localhost:81",
-        "http://localhost:8989",
-        "http://127.0.0.1:9000",
+        "http://api.hc-solutions.local",
+        "http://hc-solutions.local",
+        "http://auth.hc-solutions.local"
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
