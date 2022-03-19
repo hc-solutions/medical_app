@@ -51,21 +51,6 @@ services:
       traefik.http.routers.search.entrypoints: web
       traefik.http.routers.search.rule: Host(`ms.hc-solutions.local`)
 
-  keycloak_postgres:
-    image: postgres:12
-    volumes:
-      - keycloak_postgres:/var/lib/postgresql/data
-    restart: 'always'
-    expose:
-      - "5433"
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_USER=keycloak
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=keycloak
-      - POSTGRES_PORT=5433
-      - PGPORT=5433
-
   traefik:
     image: traefik:v2.6
     volumes:
@@ -91,29 +76,6 @@ services:
 
     ports:
       - "80:80"
-
-  keycloak:
-    image: jboss/keycloak
-    environment:
-      DB_VENDOR: postgres
-      DB_ADDR: keycloak_postgres
-      DB_PORT: 5433
-      DB_DATABASE: keycloak
-      DB_USER: keycloak
-      DB_PASSWORD: password
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: Pa55w0rd
-      KEYCLOAK_LOGLEVEL: INFO
-      JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
-      JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=600,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))"
-    depends_on:
-      - keycloak_postgres
-    expose:
-      - "8080"
-    labels:
-      traefik.enable: true
-      traefik.http.routers.keycloak.entrypoints: web
-      traefik.http.routers.keycloak.rule: Host(`auth.hc-solutions.local`)
 
   frontend:
     build:

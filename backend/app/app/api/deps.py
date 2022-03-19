@@ -1,34 +1,18 @@
-import logging
 from typing import Generator
 
-from fastapi import Depends
-from keycloak import KeycloakOpenID
-
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt
+from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-from app import crud, models
+from app import crud, models, schemas
+from app.core import security
 from app.core.config import settings
 from app.db.session import SessionLocal
 
-from fastapi.security import OAuth2AuthorizationCodeBearer
-from fastapi import Security, HTTPException, status
-from pydantic import Json
-
-logger = logging.getLogger(__name__)
-
-
-# This is just for fastapi docs
-oauth2_scheme = OAuth2AuthorizationCodeBearer(
-    authorizationUrl=f"{settings.AUTH_SERVER_URL}/auth/realms/{settings.AUTH_REALM}/protocol/openid-connect/auth",
-    tokenUrl=f"{settings.AUTH_SERVER_URL}/auth/realms/{settings.AUTH_REALM}/protocol/openid-connect/token",
-)
-
-# Auth checks, not sure that all that methods are truly async
-keycloak_openid = KeycloakOpenID(
-    server_url=settings.INTERNAL_AUTH_SERVER_URL,
-    client_id=settings.AUTH_CLIENT_ID,
-    realm_name=settings.AUTH_REALM,
-    verify=True,
+reusable_oauth2 = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
 )
 
 
@@ -40,31 +24,20 @@ def get_db() -> Generator:
         db.close()
 
 
-async def get_idp_public_key():
-    return (
-        "-----BEGIN PUBLIC KEY-----\n"
-        f"{keycloak_openid.public_key()}"
-        "\n-----END PUBLIC KEY-----"
-    )
-
-
-async def get_current_user(
-        db: Session = Depends(get_db),
-        token: str = Security(oauth2_scheme)) -> Json:
+def get_current_user(
+    db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
+) -> models.User:
     try:
-        token_data = keycloak_openid.decode_token(
-            token,
-            key=await get_idp_public_key(),
-            options={"verify_signature": True, "verify_aud": False, "exp": True},
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
         )
-    except Exception as e:
-        logger.error(str(e))
+        token_data = schemas.TokenPayload(**payload)
+    except (jwt.JWTError, ValidationError):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e),
-            headers={"WWW-Authenticate": "Bearer"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
         )
-    user = crud.user.get_by_email(db, email=token_data["preferred_username"])
+    user = crud.user.get(db, id_=token_data.sub)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
