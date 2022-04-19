@@ -8,6 +8,8 @@ from logging.config import fileConfig
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
+from app.core.config import settings
+
 config = context.config
 
 # Interpret the config file for Python logging.
@@ -24,18 +26,15 @@ from app.db.base import Base  # noqa
 
 target_metadata = Base.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
 
 def get_url():
-    user = os.getenv("POSTGRES_USER", "postgres")
-    password = os.getenv("POSTGRES_PASSWORD", "medical_postgres_password")
-    server = os.getenv("POSTGRES_SERVER", "127.0.0.1:5433")
-    db = os.getenv("POSTGRES_DB", "medical")
-    return f"postgresql://{user}:{password}@{server}/{db}"
+    return (
+        f"postgresql://"
+        f"{settings.POSTGRES_USER}:"
+        f"{settings.POSTGRES_PASSWORD}@"
+        f"{settings.POSTGRES_SERVER}/"
+        f"{settings.POSTGRES_DB}"
+    )
 
 
 def run_migrations_offline():

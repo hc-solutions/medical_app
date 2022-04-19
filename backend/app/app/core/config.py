@@ -1,3 +1,4 @@
+import os
 import secrets
 from typing import Any, Dict, List, Optional, Union
 
@@ -5,6 +6,7 @@ from pydantic import AnyHttpUrl, BaseSettings, EmailStr, PostgresDsn, validator
 
 
 class Settings(BaseSettings):
+    HOSTNAME: str = os.environ.get("HOSTNAME")
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
@@ -12,9 +14,8 @@ class Settings(BaseSettings):
     SERVER_NAME: str = "medical"
     SERVER_HOST: AnyHttpUrl = "http://127.0.0.1"
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://api.hc-solutions.local",
-        "http://hc-solutions.local",
-        "http://auth.hc-solutions.local"
+        f"http://api.{HOSTNAME}",
+        f"http://{HOSTNAME}",
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
@@ -25,12 +26,13 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    PROJECT_NAME: str = "hc-solutions"
+    PROJECT_NAME: str = "HC-Solutions"
 
-    POSTGRES_SERVER: str = "medical_db"
-    POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "medical_postgres_password"
-    POSTGRES_DB: str = "medical"
+    POSTGRES_SERVER: str = os.environ.get("POSTGRES_SERVER")
+    POSTGRES_USER: str = os.environ.get("POSTGRES_USER")
+    POSTGRES_PASSWORD: str = os.environ.get("POSTGRES_PASSWORD")
+    POSTGRES_DB: str = os.environ.get("POSTGRES_DB")
+
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
@@ -72,8 +74,9 @@ class Settings(BaseSettings):
         )
 
     EMAIL_TEST_USER: EmailStr = "test@example.com"  # type: ignore
-    FIRST_SUPERUSER: EmailStr = "admin@hc-solutions.com"
-    FIRST_SUPERUSER_PASSWORD: str = "qwerty"
+    FIRST_APP_SUPERUSER: str = os.environ.get("FIRST_APP_SUPERUSER")
+    FIRST_SUPERUSER: EmailStr = f"{FIRST_APP_SUPERUSER}@{HOSTNAME}"
+    FIRST_SUPERUSER_PASSWORD: str = os.environ.get("FIRST_APP_SUPERUSER_PASSWORD")
     USERS_OPEN_REGISTRATION: bool = True
 
     class Config:
