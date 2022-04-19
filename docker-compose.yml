@@ -7,8 +7,8 @@ services:
       - app-db-data:/var/lib/postgresql/data/pgdata
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_PASSWORD=medical_postgres_password
-      - POSTGRES_DB=medical
+      - POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
+      - POSTGRES_DB="$POSTGRES_DB"
     expose:
       - "5432"
 
@@ -23,14 +23,14 @@ services:
     expose:
       - "8000"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=medical_postgres_password
-      - POSTGRES_SERVER=medical_db
-      - POSTGRES_DB=medical
+      - POSTGRES_USER="$POSTGRES_USER"
+      - POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
+      - POSTGRES_SERVER="$POSTGRES_SERVER"
+      - POSTGRES_DB="$POSTGRES_DB"
     labels:
       traefik.enable: true
       traefik.http.routers.backend.entrypoints: web
-      traefik.http.routers.backend.rule: Host(`api.hc-solutions.local`)
+      traefik.http.routers.backend.rule: Host(`api.$HOSTNAME`)
 
   search:
     image: getmeili/meilisearch:v0.23.1
@@ -38,15 +38,15 @@ services:
     volumes:
       - meilidate:/data.ms
     environment:
-      MEILI_MASTER_KEY: "qwerty"
+      MEILI_MASTER_KEY: "$MEILI_MASTER_KEY"
       MEILI_NO_ANALYTICS: "true"
-      MEILI_LOG_LEVEL: "WARN"
+      MEILI_LOG_LEVEL: "$MEILI_LOG_LEVEL"
     expose:
       - "7700"
     labels:
       traefik.enable: true
       traefik.http.routers.search.entrypoints: web
-      traefik.http.routers.search.rule: Host(`ms.hc-solutions.local`)
+      traefik.http.routers.search.rule: Host(`ms.$HOSTNAME`)
 
   traefik:
     image: traefik:v2.6
@@ -68,7 +68,7 @@ services:
       - --entrypoints.web.address=:80
     labels:
       traefik.enable: true # <== Enable traefik on itself to view dashboard and assign subdomain to view it
-      traefik.http.routers.traefik.rule: Host(`traefik.hc-solutions.local`)
+      traefik.http.routers.traefik.rule: Host(`traefik.$HOSTNAME`)
       traefik.http.services.traefik.loadbalancer.server.port: 8080
 
     ports:
@@ -86,7 +86,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.frontend.entrypoints: web
-      traefik.http.routers.frontend.rule: Host(`hc-solutions.local`)
+      traefik.http.routers.frontend.rule: Host(`$HOSTNAME`)
 
 volumes:
   app-db-data:
