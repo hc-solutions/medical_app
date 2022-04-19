@@ -47,6 +47,7 @@ pytest==6.2.5
 python-dateutil==2.8.2
 python-dotenv==0.19.2
 python-jose==3.3.0
+python-keycloak==0.26.1
 python-keycloak-client==0.2.3
 python-multipart==0.0.5
 PyYAML==6.0

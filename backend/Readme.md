@@ -8,3 +8,10 @@
 6. Затем снова запускаете команду  `alembic revision --autogenerate -m "НАЗВАНИЕ МИГРАЦИИ"`
 7. Применяете миграции к БД - `alembic upgrade head`
 
+---
+`(linux)`
+
+Для работы с репозиторием нужно установить себе `pre-commit`
+
+Достаточно установить его через `pip install pre-commit` и далее,
+находясь в папке `medical_app` написать в терминал `pre-commit install`

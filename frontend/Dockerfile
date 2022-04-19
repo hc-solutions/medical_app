@@ -1,28 +1,23 @@
 # Stage 0, "build-stage", based on Node.js, to build and compile the frontend
-FROM tiangolo/node-frontend:10 as build-stage
+FROM node:16
 
 WORKDIR /app
 
 COPY package*.json /app/
 
 RUN npm install
+# Comment vue-cli to disable hot-reload
+RUN npm install -g @vue/cli
 
 COPY ./ /app/
-
+ARG CHOKIDAR_USEPOLLING=true
 ARG FRONTEND_ENV=dev
 
 ENV VUE_APP_ENV=${FRONTEND_ENV}
-
+ENV CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
 # Comment out the next line to disable tests
 # RUN npm run test:unit
 
-RUN npm run build
-
-
-# Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
-FROM nginx:1.15
-
-COPY --from=build-stage /app/dist/ /usr/share/nginx/html
-
-COPY --from=build-stage /nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./nginx-backend-not-found.conf /etc/nginx/extra-conf.d/backend-not-found.conf
+# Uncomment to disable hot-reload
+# RUN npm run build
+CMD npm run serve

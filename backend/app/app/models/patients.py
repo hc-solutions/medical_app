@@ -37,6 +37,16 @@ class Patients(Base):
     email = Column(String)
 
 
+class DiseaseClassifiers(Base):
+    """Classifiers, eg. DSM-V or ICO-10"""
+
+    __tablename__ = "disease_classifiers"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String, nullable=False)
+    is_actual = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
+
+
 class Diseases(Base):
     """Table for storing diseases classifications
     based on DSM/ICD"""
@@ -45,8 +55,7 @@ class Diseases(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     code = Column(String, unique=True, nullable=False)
     title = Column(String, nullable=False)
-    source = Column(Integer, nullable=False)
-    is_actual = Column(Boolean, nullable=False, default=False)
+    source = Column(Integer, ForeignKey("disease_classifiers.id"), nullable=False)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
 
 
@@ -64,8 +73,9 @@ class Procedures(Base):
 
     __tablename__ = "procedures"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String, nullable=False)
+    title = Column(String, nullable=False, unique=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
+    expires_in_days = Column(Integer, nullable=False, default=90)
 
 
 class ProceduresRecords(Base):
@@ -81,6 +91,7 @@ class ProceduresRecords(Base):
     procedure_id = Column(Integer, ForeignKey("procedures.id"))
     files = Column(JSONB)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
+    expires_at = Column(DATE)
 
 
 class MedicalRecords(Base):
@@ -120,8 +131,8 @@ class PatientAppointments(Base):
     valid_until = Column(DateTime, nullable=False)
     took_place = Column(Boolean, nullable=False, default=False)
 
-    started_at = Column(DateTime, nullable=False)
-    ended_at = Column(DateTime, nullable=False)
+    started_at = Column(DateTime)
+    ended_at = Column(DateTime)
 
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(DateTime, nullable=False, onupdate=func.now())
