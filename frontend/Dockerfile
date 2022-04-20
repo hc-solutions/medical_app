@@ -15,6 +15,7 @@ ARG FRONTEND_ENV=dev
 
 ENV VUE_APP_ENV=${FRONTEND_ENV}
 ENV CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
+ENV PORT=3000
 # Comment out the next line to disable tests
 # RUN npm run test:unit
 
