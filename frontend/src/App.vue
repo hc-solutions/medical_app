@@ -1,21 +1,19 @@
 <template>
-  <ToolbarComponent :pages="pages"></ToolbarComponent>
+  <div id="app">
+    <img alt="Vue logo" src="./assets/logo.png">
+    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  </div>
 </template>
 
 <script>
-import ToolbarComponent from "./layout/toolbar-component.vue";
+import HelloWorld from './components/HelloWorld.vue'
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    ToolbarComponent,
-  },
-  data() {
-    return {
-      pages: [],
-    };
-  },
-};
+    HelloWorld
+  }
+}
 </script>
 
 <style>
