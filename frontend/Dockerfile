@@ -19,4 +19,9 @@ ENV PORT=3000
 
 # Uncomment to disable hot-reload
 # RUN npm run build
+
+RUN chown -R node /app/node_modules
+
+USER node
+
 CMD npm run serve
