@@ -12,10 +12,13 @@ class Settings(BaseSettings):
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     SERVER_NAME: str = "medical"
-    SERVER_HOST: AnyHttpUrl = "http://127.0.0.1"
+    SERVER_HOST: AnyHttpUrl = f"http://{HOSTNAME}"
+
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
         f"http://api.{HOSTNAME}",
+        f"https://api.{HOSTNAME}",
         f"http://{HOSTNAME}",
+        f"https://{HOSTNAME}",
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)

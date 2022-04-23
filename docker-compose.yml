@@ -30,6 +30,7 @@ services:
       - FIRST_APP_SUPERUSER=$FIRST_APP_SUPERUSER
       - FIRST_APP_SUPERUSER_PASSWORD=$FIRST_APP_SUPERUSER_PASSWORD
       - HOSTNAME=$HOSTNAME
+      - SCOPE=dev
     labels:
       traefik.enable: true
       traefik.http.routers.backend.entrypoints: web
@@ -80,12 +81,11 @@ services:
   frontend:
     build:
       context: frontend/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.local
     volumes:
       - ./frontend:/app
-      - /app/node_modules
     expose:
-      - "3000"
+      - "8080"  # "80" for production
     labels:
       traefik.enable: true
       traefik.http.routers.frontend.entrypoints: web
