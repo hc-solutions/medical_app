@@ -1,23 +1,24 @@
-# Stage 0, "build-stage", based on Node.js, to build and compile the frontend
-FROM node:16
+FROM node:16-alpine as build-stage
+
+ARG FRONTEND_ENV=production
+ENV VUE_APP_ENV=${FRONTEND_ENV}
+ENV VUE_APP_NAME=${VUE_APP_NAME}
 
 WORKDIR /app
 
-COPY package*.json /app/
+COPY ./package*.json /app/
+# COPY ./yarn.lock /app/
 
-RUN npm install
-# Comment vue-cli to disable hot-reload
-RUN npm install -g @vue/cli
+RUN yarn install
 
 COPY ./ /app/
-ARG CHOKIDAR_USEPOLLING=true
-ARG FRONTEND_ENV=dev
 
-ENV VUE_APP_ENV=${FRONTEND_ENV}
-ENV CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
-# Comment out the next line to disable tests
-# RUN npm run test:unit
+RUN yarn build
 
-# Uncomment to disable hot-reload
-# RUN npm run build
-CMD npm run serve
+FROM nginx:1.15 as production-stage
+
+COPY --from=build-stage /app/dist/ /usr/share/nginx/html
+COPY --from=build-stage /app/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx-backend-not-found.conf /etc/nginx/extra-conf.d/backend-not-found.conf
+
+WORKDIR /usr/share/nginx/html
