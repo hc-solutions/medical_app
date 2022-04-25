@@ -1,4 +1,5 @@
 import logging
+import os
 
 import uvicorn
 from fastapi import FastAPI
@@ -9,9 +10,16 @@ from app.core.config import settings
 
 logger = logging.getLogger()
 
-app = FastAPI(
-    title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
-)
+START_ARGS = {}
+if os.getenv("SCOPE") == "dev":
+    START_ARGS = {
+        "title": settings.PROJECT_NAME,
+        "openapi_url": f"{settings.API_V1_STR}/openapi.json",
+    }
+else:
+    START_ARGS = {"openapi_url": None, "docs": None, "redoc": None}
+
+app = FastAPI(**START_ARGS)
 
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:
@@ -26,4 +34,4 @@ if settings.BACKEND_CORS_ORIGINS:
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 if __name__ == "__main__":
-    uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app="main:app", host="0.0.0.0", port=8000)
