@@ -1,0 +1,171 @@
+name: Integration
+
+on:
+  push:
+    branches: ["staging"]
+  pull_request_review:
+    branches: ["staging"]
+    types: [submitted]
+
+jobs:
+  cleanup:
+    runs-on: self-hosted
+    container:
+      image: ghcr.io/hc-solutions/ubuntu:20.04
+      credentials:
+        username: ${{ secrets.GHCR_USERNAME }}
+        password: ${{ secrets.GHCR_TOKEN }}
+    steps:
+      - name: Cleaning up the $GITHUB_WORKSPACE as root from a Docker image
+        run: chown -R 1000:1000 /__w
+
+  checkout:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [cleanup]
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - id: version
+        run: echo "::set-output name=version::`grep 'version:' ./helm/Chart.yaml | cut -d ' ' -f 2`"
+
+  lint-frontend:
+    needs: [checkout]
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    steps:
+      - name: Lint Code Base
+        continue-on-error: true
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_INCLUDE: ./frontend/.*
+      - name: Exit
+        run: echo Done
+
+  lint-backend:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [checkout]
+    steps:
+      - name: Lint Code Base
+        continue-on-error: false
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_INCLUDE: ./backend/.*
+      - name: Exit
+        run: echo Done
+
+  # bandit:
+  #   runs-on: self-hosted
+  #   needs: [checkout, lint-backend]
+  #   container:
+  #     image: ghcr.io/hc-solutions/bandit:alpine3.15
+  #     credentials:
+  #       username: ${{ secrets.GHCR_USERNAME }}
+  #       password: ${{ secrets.GHCR_TOKEN }}
+  #   steps:
+  #   - name: Bandit Scan
+  #     continue-on-error: true
+  #     run: bandit -r ./backend
+  #   - name: Exit
+  #     run: echo Done
+
+  build-frontend:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [checkout, lint-frontend]
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v2
+        with:
+          context: ./frontend_app
+          push: true
+          tags: ghcr.io/hc-solutions/prod/medical-app-frontend-app:${{ needs.checkout.outputs.version }}
+
+  scan-frontend:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [checkout, build-frontend]
+    steps:
+      - name: Scan frontend image
+        uses: Azure/container-scan@v0
+        with:
+          image-name: ghcr.io/hc-solutions/prod/medical-app-frontend-app:${{ needs.checkout.outputs.version }}
+          severity-threshold: HIGH
+
+  build-frontend-landing:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [checkout, lint-frontend]
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v2
+        with:
+          context: ./landing
+          push: true
+          tags: ghcr.io/hc-solutions/prod/medical-app-frontend-landing:${{ needs.checkout.outputs.version }}
+
+  scan-frontend-landing:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [checkout, build-frontend]
+    steps:
+      - name: Scan frontend image
+        uses: Azure/container-scan@v0
+        with:
+          image-name: ghcr.io/hc-solutions/prod/medical-app-frontend-landing:${{ needs.checkout.outputs.version }}
+          severity-threshold: HIGH
+
+  build-backend:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [checkout, lint-backend, bandit]
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
+      - name: Build and push Backend
+        uses: docker/build-push-action@v2
+        with:
+          context: ./backend
+          file: ./backend/backend.dockerfile
+          push: true
+          tags: ghcr.io/hc-solutions/prod/medical-app-backend:${{ needs.checkout.outputs.version }}
+
+  scan-backend:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [checkout, build-backend]
+    steps:
+      - name: Scan backend image
+        uses: Azure/container-scan@v0
+        with:
+          image-name: ghcr.io/hc-solutions/prod/medical-app-backend:${{ needs.checkout.outputs.version }}
+          severity-threshold: HIGH
