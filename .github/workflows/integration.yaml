@@ -35,7 +35,7 @@ jobs:
       - id: version
         run: echo "::set-output name=version::`grep 'version:' ./helm/Chart.yaml | cut -d ' ' -f 2`"
 
-  lint-frontend:
+  lint-frontend-app:
     needs: [checkout]
     if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
     runs-on: self-hosted
@@ -47,7 +47,23 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FILTER_REGEX_INCLUDE: ./frontend/.*
+          FILTER_REGEX_INCLUDE: ./frontend_app/.*
+      - name: Exit
+        run: echo Done
+
+  lint-frontend-landing:
+    needs: [checkout]
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    steps:
+      - name: Lint Code Base
+        continue-on-error: true
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_INCLUDE: ./landing/.*
       - name: Exit
         run: echo Done
 
@@ -82,10 +98,10 @@ jobs:
   #   - name: Exit
   #     run: echo Done
 
-  build-frontend:
+  build-frontend-app:
     if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
     runs-on: self-hosted
-    needs: [checkout, lint-frontend]
+    needs: [checkout, lint-frontend-app]
     steps:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
@@ -103,7 +119,7 @@ jobs:
   scan-frontend:
     if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
     runs-on: self-hosted
-    needs: [checkout, build-frontend]
+    needs: [checkout, build-frontend-app]
     steps:
       - name: Scan frontend image
         uses: Azure/container-scan@v0
@@ -114,7 +130,7 @@ jobs:
   build-frontend-landing:
     if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
     runs-on: self-hosted
-    needs: [checkout, lint-frontend]
+    needs: [checkout, lint-frontend-app]
     steps:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
@@ -132,7 +148,7 @@ jobs:
   scan-frontend-landing:
     if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
     runs-on: self-hosted
-    needs: [checkout, build-frontend]
+    needs: [checkout, build-frontend-landing]
     steps:
       - name: Scan frontend image
         uses: Azure/container-scan@v0
