@@ -1,5 +1,8 @@
 version: "2.7"
 
+networks:
+  default:
+
 services:
   medical_db:
     image: postgres:12
@@ -78,23 +81,32 @@ services:
     ports:
       - "80:80"
 
-  frontend:
+  frontend_app:
     build:
-      context: frontend/
+      context: frontend_app/
       dockerfile: Dockerfile.local
     volumes:
-      - ./frontend:/app
+      - ./frontend_app:/app
     expose:
       - "8080"  # "80" for production
     labels:
       traefik.enable: true
-      traefik.http.routers.frontend.entrypoints: web
-      traefik.http.routers.frontend.rule: Host(`$HOSTNAME`)
+      traefik.http.routers.frontend_app.entrypoints: web
+      traefik.http.routers.frontend_app.rule: Host(`app.$HOSTNAME`)
+
+  landing:
+    build:
+      context: landing/
+      dockerfile: Dockerfile.local
+    volumes:
+      - ./landing:/app
+    expose:
+      - "8080" # 80 for production
+    labels:
+      traefik.enable: true
+      traefik.http.routers.landing.entrypoints: web
+      traefik.http.routers.landing.rule: Host(`$HOSTNAME`)
 
 volumes:
   app-db-data:
   meilidate:
-  keycloak_postgres:
-
-networks:
-  default:

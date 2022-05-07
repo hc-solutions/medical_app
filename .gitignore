@@ -3,3 +3,4 @@
 /.idea/
 *.db
 /database/postgres/
+*/node_modules/

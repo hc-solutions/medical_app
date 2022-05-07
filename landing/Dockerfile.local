@@ -1,0 +1,15 @@
+FROM node:12-alpine
+
+ARG FRONTEND_ENV=dev
+
+ENV VUE_APP_ENV=${FRONTEND_ENV}
+ENV VUE_APP_NAME=${VUE_APP_NAME}
+
+RUN mkdir -p /usr/src/cache
+
+WORKDIR /usr/src/cache
+COPY package*.json ./
+RUN yarn
+COPY ./ /app/
+WORKDIR /app
+ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]

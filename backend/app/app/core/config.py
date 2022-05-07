@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
         f"http://api.{HOSTNAME}",
         f"https://api.{HOSTNAME}",
-        f"http://{HOSTNAME}",
-        f"https://{HOSTNAME}",
+        f"http://app.{HOSTNAME}",
+        f"https://app.{HOSTNAME}",
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
