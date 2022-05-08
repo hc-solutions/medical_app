@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-backend
+  labels:
+{{ include "backend.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "backend.labels" . | indent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: {{ .Values.backend.maxUnavailable }}
+      maxSurge: {{ .Values.backend.maxSurge }}
+  template:
+    metadata:
+      labels:
+{{ include "backend.labels" . | indent 8 }}
+    spec:
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecrets }}
+      containers:
+      - name: {{ .Chart.Name }}-backend
+        image: {{ .Values.backend.image.hub }}/{{ .Values.environment }}/{{ .Chart.Name }}-backend:{{ .Chart.Version }}
+        envFrom:
+        - secretRef:
+            name: {{ .Chart.Name }}-backend
+        ports:
+        - name: http
+          containerPort: {{ .Values.backend.containerPort }}

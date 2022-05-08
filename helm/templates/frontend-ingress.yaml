@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}-frontend
+  labels:
+    kcert.dev/ingress: "managed"
+{{- with .Values.frontend.ingress.annotations }}
+  annotations:
+{{- toYaml . | nindent 4 }}
+{{- end }}
+spec:
+{{- with .Values.frontend.ingress.tls }}
+  tls:
+{{- toYaml . | nindent 4 }}
+{{- end }}
+  rules:
+  - host: {{ .Values.frontend.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.frontend.ingress.path }}
+        pathType: {{ .Values.frontend.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Chart.Name }}-frontend
+            port:
+              name: http
