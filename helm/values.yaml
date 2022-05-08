@@ -1,0 +1,60 @@
+environment: prod
+
+frontend:
+  replicaCount: 1
+  containerPort: 80
+  imagePullSecrets: ghcr-regcred
+
+  image:
+    hub: ghcr.io/hc-solutions
+    pullPolicy: Always
+  
+  maxUnavailable: 0
+  maxSurge: 1
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+
+    host: hc-solutions.ml
+    path: /
+    pathType: Prefix
+
+    tls:
+    - secretName: tls-hc-solutions-ml
+      hosts:
+      - hc-solutions.ml
+
+backend:
+  replicaCount: 1
+  containerPort: 8000
+  imagePullSecrets: ghcr-regcred
+
+  image:
+    hub: ghcr.io/hc-solutions
+    pullPolicy: Always
+  
+  maxUnavailable: 0
+  maxSurge: 1
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: "nginx"
+
+    host: api.hc-solutions.ml
+    path: /
+    pathType: Prefix
+
+    tls:
+    - secretName: tls-api-hc-solutions-ml
+      hosts:
+      - api.hc-solutions.ml
+      
