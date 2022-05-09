@@ -17,7 +17,7 @@ jobs:
         password: ${{ secrets.GHCR_TOKEN }}
     steps:
       - name: Cleaning up the $GITHUB_WORKSPACE as root from a Docker image
-        run: chown -R 1000:1000 /__w
+        run: if [[ /__w -f ]]; then chown -R 1000:1000 /__w; fi
   
   checkout:
     if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
