@@ -1,0 +1,70 @@
+name: Linters
+
+on:
+  push:
+    branches: ["staging"]
+  pull_request_review:
+    branches: ["staging"]
+    types: [submitted]
+
+jobs:
+  cleanup:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    container:
+      image: ghcr.io/hc-solutions/ubuntu:20.04
+      credentials:
+        username: ${{ secrets.GHCR_USERNAME }}
+        password: ${{ secrets.GHCR_TOKEN }}
+    steps:
+      - name: Cleaning up the $GITHUB_WORKSPACE as root from a Docker image
+        shell: bash
+        run: if [[ -d /__w ]]; then chown -R 1000:1000 /__w; fi
+  
+  checkout:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [cleanup]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+  lint-frontend:
+    needs: [checkout]
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    steps:
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_INCLUDE: ./frontend/.*
+
+  lint-backend:
+    if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
+    runs-on: self-hosted
+    needs: [checkout]
+    steps:
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FILTER_REGEX_INCLUDE: ./backend/app/app/.*
+    
+  bandit:
+    runs-on: self-hosted
+    needs: [checkout]
+    container:
+      image: ghcr.io/hc-solutions/bandit:alpine3.15
+      credentials:
+        username: ${{ secrets.GHCR_USERNAME }}
+        password: ${{ secrets.GHCR_TOKEN }}
+    steps:
+    - name: Bandit Scan
+      run: bandit -r ./backend/app/app
