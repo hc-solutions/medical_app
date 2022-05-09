@@ -1,4 +1,4 @@
-environment: staging
+environment: prod
 
 frontend:
   replicaCount: 1
@@ -8,7 +8,7 @@ frontend:
   image:
     hub: ghcr.io/hc-solutions
     pullPolicy: Always
-  
+
   maxUnavailable: 0
   maxSurge: 1
 
@@ -37,7 +37,7 @@ backend:
   image:
     hub: ghcr.io/hc-solutions
     pullPolicy: Always
-  
+
   maxUnavailable: 0
   maxSurge: 1
 
@@ -57,4 +57,3 @@ backend:
     - secretName: tls-api-hc-solutions-ml
       hosts:
       - api.hc-solutions.ml
-      
