@@ -23,7 +23,7 @@ spec:
       - name: {{ .Values.imagePullSecrets }}
       containers:
       - name: {{ .Chart.Name }}-frontend
-        image: {{ .Values.frontend.image.hub }}/{{ .Values.environment }}/{{ .Chart.Name }}-frontend:{{ .Chart.Version }}
+        image: {{ .Values.frontend.image.hub }}/{{ .Chart.Name }}-frontend:{{ .Chart.Version }}
         ports:
         - name: http
           containerPort: {{ .Values.frontend.containerPort }}
