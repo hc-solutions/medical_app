@@ -9,5 +9,7 @@ on:
 
 jobs:
   print:
+    runs-on: self-hosted
     steps:
-    - run: echo ${{ github }}
+    - name: read github variable
+      run: echo ${{ github }}
