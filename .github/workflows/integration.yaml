@@ -140,3 +140,4 @@ jobs:
         with:
           image-name: ghcr.io/hc-solutions/prod/medical-app-backend:${{ needs.checkout.outputs.version }}
           severity-threshold: HIGH
+
