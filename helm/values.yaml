@@ -5,7 +5,7 @@ frontend:
 
   image:
     hub: ghcr.io/hc-solutions
-    pullPolicy: Always
+    imagePullPolicy: Always
 
   maxUnavailable: 0
   maxSurge: 1
@@ -34,7 +34,7 @@ backend:
 
   image:
     hub: ghcr.io/hc-solutions
-    pullPolicy: Always
+    imagePullPolicy: Always
 
   maxUnavailable: 0
   maxSurge: 1
