@@ -2,8 +2,4 @@ apiVersion: v1
 appVersion: "0.0.0"
 description: Helm chart for medical-app service
 name: medical-app
-<<<<<<< Updated upstream
 version: 0.0.0
-=======
-version: 0.0.0
->>>>>>> Stashed changes
