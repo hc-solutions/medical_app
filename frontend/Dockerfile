@@ -9,11 +9,11 @@ WORKDIR /app
 COPY ./package*.json /app/
 # COPY ./yarn.lock /app/
 
-RUN yarn install
+RUN npm install
 
 COPY ./ /app/
 
-RUN yarn build
+RUN npm run build
 
 FROM nginx:1.15 as production-stage
 

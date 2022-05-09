@@ -1,5 +1,5 @@
 <template>
-  <div>bitch</div>
+  <div>bitch please, would you finally ыфавфыва</div>
 </template>
 
 <script>

@@ -9,7 +9,7 @@ RUN mkdir -p /usr/src/cache
 
 WORKDIR /usr/src/cache
 COPY package*.json ./
-RUN yarn install
+RUN npm install
 COPY ./ /app/
 WORKDIR /app
 ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]

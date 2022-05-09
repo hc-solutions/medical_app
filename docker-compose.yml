@@ -84,6 +84,8 @@ services:
       dockerfile: Dockerfile.local
     volumes:
       - ./frontend:/app
+    environment: 
+      - CHOKIDAR_USEPOLLING=true
     expose:
       - "8080"  # "80" for production
     labels:
