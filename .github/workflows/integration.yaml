@@ -9,4 +9,5 @@ on:
 
 jobs:
   print:
-    run: echo ${{ github }}
+    steps:
+      run: echo ${{ github }}
