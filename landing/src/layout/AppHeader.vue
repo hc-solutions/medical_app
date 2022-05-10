@@ -4,10 +4,10 @@
             <h1 class="display-4 text-white">medical app</h1>
             <ul class="navbar-nav ml-lg-auto flex-row">
                 <li class="nav-item">
-                    <base-button tag="a" href="#" type="default" size="m">Войти</base-button>
+                    <base-button tag="a" href="#" type="default" size="m">Sign In</base-button>
                 </li>
                 <li class="nav-item">
-                    <base-button tag="a" href="#" type="secondary" size="m">Регистрация</base-button>
+                    <base-button tag="a" href="#" type="secondary" size="m">Sign Up</base-button>
                 </li>
             </ul>
         </div>
