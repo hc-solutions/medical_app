@@ -1,9 +1,9 @@
 <template>
     <div>
         <header class="header-global position-absolute d-flex w-100">
-            <div class="container container-xl p-2 d-flex flex-row align-items-center">
+            <div class="container container-xl p-2 d-flex flex-row align-items-center justify-content-between">
                 <h1 class="display-4 text-white">medical app</h1>
-                <ul class="navbar-nav ml-lg-auto flex-row">
+                <ul class="nav nav-pills">
                     <li class="nav-item">
                         <base-button tag="a" href="#" type="default" size="m" @click="modals.signinmodal = true">Sign In</base-button>
                     </li>
