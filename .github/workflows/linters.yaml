@@ -2,9 +2,9 @@ name: Linters
 
 on:
   push:
-    branches: ["staging"]
+    branches: ["pipeline"]
   pull_request_review:
-    branches: ["staging"]
+    branches: ["pipeline"]
     types: [submitted]
 
 jobs:
