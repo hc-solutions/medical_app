@@ -36,7 +36,7 @@ jobs:
       - id: get-app-name
         run: echo "::set-output name=app-name::`grep 'name:' ./helm/Chart.yaml | cut -d ' ' -f 2`"
       - id: get-app-version
-        run: echo "::set-output name=app-version::$(version=`grep 'version:' ./helm/Chart.yaml | cut -d ' ' -f 2`"
+        run: echo "::set-output name=app-version::$(version=`grep 'version:' ./helm/Chart.yaml | cut -d ' ' -f 2`)"
         # run: echo "::set-output name=app-version::$(version=`grep 'version:' ./helm/Chart.yaml | cut -d ' ' -f 2` && echo `echo $version | cut -d '.' -f 1,2`.$((`echo $version | cut -d '.' -f 3`+1)))"
       # - name: Change version in helm/Chart.yaml 
       #   run: sed -i 's/version: .*/version: ${{ steps.get-app-version.outputs.app-version }}/; s/appVersion: ".*/appVersion: "${{ steps.get-app-version.outputs.app-version }}"/' helm/Chart.yaml 
