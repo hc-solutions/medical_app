@@ -90,12 +90,18 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.GHCR_USERNAME }}
           password: ${{ secrets.GHCR_TOKEN }}
-      - name: Build and push Frontend
+      - name: Build and push Frontend App
         uses: docker/build-push-action@v2
         with:
-          context: ./frontend
+          context: ./frontend_app
           push: true
           tags: ghcr.io/hc-solutions/${{ needs.checkout.outputs.app-name }}-frontend:${{ needs.checkout.outputs.app-version }}
+      - name: Build and push Landing
+        uses: docker/build-push-action@v2
+        with:
+          context: ./landing
+          push: true
+          tags: ghcr.io/hc-solutions/${{ needs.checkout.outputs.app-name }}-landing:${{ needs.checkout.outputs.app-version }}
 
   
 

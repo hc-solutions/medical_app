@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-landing
+  labels:
+{{ include "landing.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.landing.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "landing.labels" . | indent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: {{ .Values.landing.maxUnavailable }}
+      maxSurge: {{ .Values.landing.maxSurge }}
+  template:
+    metadata:
+      labels:
+{{ include "landing.labels" . | indent 8 }}
+    spec:
+      imagePullSecrets:
+      - name: {{ .Values.landing.imagePullSecrets }}
+      containers:
+      - name: {{ .Chart.Name }}-landing
+        image: {{ .Values.landing.image.hub }}/{{ .Chart.Name }}-landing:{{ .Chart.Version }}
+        imagePullPolicy: {{ .Values.landing.image.imagePullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.landing.containerPort }}

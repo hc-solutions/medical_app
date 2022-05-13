@@ -7,3 +7,8 @@ component: frontend
 app: {{ .Chart.Name }}
 component: backend
 {{- end -}}
+
+{{- define "landing.labels" -}}
+app: {{ .Chart.Name }}
+component: landing
+{{- end -}}
