@@ -44,7 +44,6 @@ jobs:
       #   with:
       #     add: './helm/Chart.yaml'
 
-
       #     # The name of the user that will be displayed as the author of the commit.
       #     # Default: depends on the default_author input
       #     author_name: ${{ runner.name }}
