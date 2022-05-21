@@ -3,13 +3,13 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import DashboardLayout from "@/layout/DashboardLayout";
 import AuthLayout from "@/layout/AuthLayout";
 
-import Dashboard from "../views/Dashboard.vue";
-import Icons from "../views/Icons.vue";
-import Maps from "../views/Maps.vue";
+import MDashboard from "../views/MDashboard.vue";
+import Icons from "../views/MIcons.vue";
+import Maps from "../views/MMaps.vue";
 import Profile from "../views/UserProfile.vue";
 import Tables from "../views/Tables.vue";
 
-import Login from "../views/Login.vue";
+import Login from "../views/MLogin.vue";
 import Register from "../views/Register.vue";
 
 const routes = [
@@ -21,7 +21,7 @@ const routes = [
       {
         path: "/dashboard",
         name: "dashboard",
-        components: { default: Dashboard },
+        components: { default: MDashboard },
       },
       {
         path: "/icons",

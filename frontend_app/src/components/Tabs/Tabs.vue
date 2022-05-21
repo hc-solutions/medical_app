@@ -46,7 +46,7 @@ import { h } from "vue";
 import PillsLayout from "./PillsLayout";
 import TabsLayout from "./TabsLayout";
 export default {
-  name: "tabs",
+  name: "m-tabs",
   components: {
     TabsLayout,
     PillsLayout,

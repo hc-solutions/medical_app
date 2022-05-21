@@ -137,7 +137,7 @@
 import NavbarToggleButton from "@/components/NavbarToggleButton";
 
 export default {
-  name: "sidebar",
+  name: "m-sidebar",
   components: {
     NavbarToggleButton,
   },

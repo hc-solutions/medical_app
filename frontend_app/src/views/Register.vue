@@ -93,7 +93,7 @@
 </template>
 <script>
 export default {
-  name: "register",
+  name: "m-register",
   data() {
     return {
       model: {
