@@ -1,17 +1,21 @@
-Применение миграций и создание миграций
+# Applying migrations & creating migrations
 
-1. Вносите изменения в ORM-модели, добавляете таблицы
-2. В файле app.db.base импортируете все модели которые еще туда не были импортированы
-3. Экспортируете переменную PYTHONPATH, находясь в папке `backend/app` выполняете `export PYTHONPATH=$(pwd)`
-4. Запускаете команду  `alembic revision --autogenerate -m "НАЗВАНИЕ МИГРАЦИИ"`
-5. Если alembic говорит что `FAILED: Target database is not up to date.`, то накатываем последние миграции через `alembic upgrade head`
-6. Затем снова запускаете команду  `alembic revision --autogenerate -m "НАЗВАНИЕ МИГРАЦИИ"`
-7. Применяете миграции к БД - `alembic upgrade head`
+1. Update/create ORM models in models folder
+2. Import all new models in app.db.base module, if they were not imported
+3. Export PYTHONPATH from folder `backend/app` via `export PYTHONPATH=$(pwd)`
+4. Run  `alembic revision --autogenerate -m "Migration name"`
+5. If there will be error such `FAILED: Target database is not up to date.`, you need to apply existing migrations
+to database with `alembic upgrade head`
+6. Repeat step 4
+7. Apply fresh migrations to database with `alembic upgrade head`
 
 ---
 `(linux)`
 
-Для работы с репозиторием нужно установить себе `pre-commit`
+For better coding experience, install `pre-commit` ( tool for installing git hooks to lint / check / format your code ).
 
-Достаточно установить его через `pip install pre-commit` и далее,
-находясь в папке `medical_app` написать в терминал `pre-commit install`
+You can install it with `pip3`: `pip3 install pre-commit`
+
+Then go to  project root folder and run `pre-commit install`.
+
+Hooks for git will be installed for this project
