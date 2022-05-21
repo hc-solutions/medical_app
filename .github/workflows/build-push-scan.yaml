@@ -7,6 +7,7 @@ on:
     branches: ["pipeline"]
     types: [submitted]
 
+
 jobs:
   cleanup:
     if: ${{ (github.event.review.state == 'approved') || (github.event_name == 'push') }}
