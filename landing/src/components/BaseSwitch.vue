@@ -3,7 +3,7 @@
         <input type="checkbox"
                v-model="model"
                v-bind="$attrs"
-               v-on="$listeners">
+               v-on="listeners">
         <span class="custom-toggle-slider rounded-circle"></span>
     </label>
 </template>
