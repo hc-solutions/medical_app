@@ -20,10 +20,11 @@ spec:
 {{ include "frontend.labels" . | indent 8 }}
     spec:
       imagePullSecrets:
-      - name: {{ .Values.imagePullSecrets }}
+      - name: {{ .Values.frontend.imagePullSecrets }}
       containers:
       - name: {{ .Chart.Name }}-frontend
-        image: {{ .Values.frontend.image.hub }}/{{ .Values.environment }}/{{ .Chart.Name }}-frontend:{{ .Chart.Version }}
+        image: {{ .Values.frontend.image.hub }}/{{ .Chart.Name }}-frontend:{{ .Chart.Version }}
+        imagePullPolicy: {{ .Values.frontend.image.imagePullPolicy }}
         ports:
         - name: http
           containerPort: {{ .Values.frontend.containerPort }}

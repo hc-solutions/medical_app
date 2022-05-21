@@ -20,10 +20,16 @@ spec:
 {{ include "backend.labels" . | indent 8 }}
     spec:
       imagePullSecrets:
-      - name: {{ .Values.imagePullSecrets }}
+      - name: {{ .Values.backend.imagePullSecrets }}
       containers:
       - name: {{ .Chart.Name }}-backend
-        image: {{ .Values.backend.image.hub }}/{{ .Values.environment }}/{{ .Chart.Name }}-backend:{{ .Chart.Version }}
+        image: {{ .Values.backend.image.hub }}/{{ .Chart.Name }}-backend:{{ .Chart.Version }}
+        imagePullPolicy: {{ .Values.backend.image.imagePullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Chart.Name }}-backend
+            optional: false
+
         ports:
         - name: http
           containerPort: {{ .Values.backend.containerPort }}
