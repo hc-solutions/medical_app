@@ -25,7 +25,7 @@
 </template>
 <script>
 export default {
-  name: "card",
+  name: "m-card",
   props: {
     type: {
       type: String,

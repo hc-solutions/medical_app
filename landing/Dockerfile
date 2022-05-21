@@ -1,4 +1,4 @@
-FROM node:12-alpine as build-stage
+FROM node:16 as build-stage
 
 ARG FRONTEND_ENV=production
 ENV VUE_APP_ENV=${FRONTEND_ENV}
@@ -9,11 +9,11 @@ WORKDIR /app
 COPY ./package*.json /app/
 # COPY ./yarn.lock /app/
 
-RUN yarn install
+RUN npm install
 
 COPY ./ /app/
 
-RUN yarn build
+RUN npm run build
 
 FROM nginx:1.15 as production-stage
 

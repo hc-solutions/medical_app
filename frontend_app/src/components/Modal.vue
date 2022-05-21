@@ -52,7 +52,7 @@
 </template>
 <script>
 export default {
-  name: "modal",
+  name: "m-modal",
   props: {
     show: Boolean,
     showClose: {
