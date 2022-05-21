@@ -67,7 +67,7 @@
 </template>
 <script>
 export default {
-  name: "login",
+  name: "m-login",
   data() {
     return {
       model: {

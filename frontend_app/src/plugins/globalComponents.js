@@ -21,7 +21,7 @@ import { ElTooltip, ElPopover } from "element-plus";
 
 const GlobalComponents = {
   install(app) {
-    app.component("badge", Badge);
+    app.component("m-badge", Badge);
     app.component("base-alert", BaseAlert);
     app.component("base-button", BaseButton);
     app.component("base-checkbox", BaseCheckbox);
@@ -34,11 +34,11 @@ const GlobalComponents = {
     app.component("base-switch", BaseSwitch);
     app.component("base-radio", BaseRadio);
     app.component("base-table", BaseTable);
-    app.component("card", Card);
-    app.component("modal", Modal);
+    app.component("m-card", Card);
+    app.component("m-modal", Modal);
     app.component("stats-card", StatsCard);
     app.component("tab-pane", TabPane);
-    app.component("tabs", Tabs);
+    app.component("m-tabs", Tabs);
     app.use(ElTooltip);
     app.use(ElPopover);
   },

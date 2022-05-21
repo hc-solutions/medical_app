@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:16
 
 ARG FRONTEND_ENV=dev
 
@@ -9,7 +9,8 @@ RUN mkdir -p /usr/src/cache
 
 WORKDIR /usr/src/cache
 COPY package*.json ./
-RUN yarn install
+RUN npm install
+
 COPY ./ /app/
 WORKDIR /app
 ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]

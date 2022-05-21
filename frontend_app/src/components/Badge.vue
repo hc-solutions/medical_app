@@ -15,7 +15,7 @@
 </template>
 <script>
 export default {
-  name: "badge",
+  name: "m-badge",
   props: {
     tag: {
       type: String,
