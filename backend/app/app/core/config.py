@@ -79,7 +79,9 @@ class Settings(BaseSettings):
     EMAIL_TEST_USER: EmailStr = "test@example.com"  # type: ignore
     FIRST_APP_SUPERUSER: Optional[str] = os.environ.get("FIRST_APP_SUPERUSER")
     FIRST_SUPERUSER: EmailStr = f"{FIRST_APP_SUPERUSER}@{HOSTNAME}"
-    FIRST_SUPERUSER_PASSWORD: Optional[str] = os.environ.get("FIRST_APP_SUPERUSER_PASSWORD")
+    FIRST_SUPERUSER_PASSWORD: Optional[str] = os.environ.get(
+        "FIRST_APP_SUPERUSER_PASSWORD"
+    )
     USERS_OPEN_REGISTRATION: bool = True
 
     class Config:
@@ -87,3 +89,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
