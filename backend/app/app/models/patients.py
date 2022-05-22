@@ -1,11 +1,11 @@
 from sqlalchemy import (
+    Boolean,
     Column,
+    DATE,
+    DateTime,
     ForeignKey,
     Integer,
     String,
-    DateTime,
-    DATE,
-    Boolean,
     Text,
     func,
 )
@@ -13,6 +13,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
+
 
 # ------------ Patients, medical cards, prescriptions, diagnoses, diseases and procedures
 
