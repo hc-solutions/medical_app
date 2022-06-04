@@ -87,7 +87,7 @@
 <script>
 import ProjectsTable from "./Tables/ProjectsTable";
 export default {
-  name: "tables",
+  name: "m-tables",
   components: {
     ProjectsTable,
   },

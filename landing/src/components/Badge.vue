@@ -1,10 +1,10 @@
 <template>
     <component :is="tag"
-               class="badge"
+               class="MyBadge"
                :class="
-               [`badge-${type}`,
-                rounded ? `badge-pill` : '',
-                circle && 'badge-circle'
+               [`MyBadge-${type}`,
+                rounded ? `MyBadge-pill` : '',
+                circle && 'MyBadge-circle'
                ]">
         <slot>
             <i v-if="icon" :class="icon"></i>
@@ -13,7 +13,7 @@
 </template>
 <script>
 export default {
-  name: "badge",
+  name: "MyBadge",
   props: {
     tag: {
       type: String,

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 # Shared properties
 class ProcedureBase(BaseModel):
     title: str
-    created_at: datetime.datetime = datetime.datetime.now()
+    created_at: Optional[datetime.datetime] = datetime.datetime.now()
 
 
 # Properties to receive via API on creation

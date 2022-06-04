@@ -15,7 +15,7 @@
 </template>
 <script>
 export default {
-  name: "icon",
+  name: "MIcon",
   props: {
     name: {
       type: String,

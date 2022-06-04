@@ -1,42 +1,34 @@
-3
+This is an open source service for healthcare.
 
-Сервис будет предоставлять возможность вести учет анализов пациентов, сроки их исследований и предупреждать персонал
-лечебного учреждения о необходимости пересдать анализы.
+This app will help to create appointments and notify hospital staff and patients about them,
+track analysis and medicine expiration time and notify about it.
+App will help to manage electronic health records, track all prescriptions, diagnoses and so on.
 
-Однако, база данных, разработанная в рамках данного проекта позволяет модернизировать проект и использовать его для
-управления небольшим лечебным учреждением.
+Later we will work to create fully functional and secure application to manage a tiny hospital / private medical practice
 
 ---
 
-Чтобы все заработало, необходимо добавить эти строчки в свой hosts файл
+## Installation for local development
 
-На Linux и MacOS они находятся в `/etc/hosts`
-На Windows они находятся в  `c:\Windows\System32\Drivers\etc\hosts`
+To make this project work you should add some DNS-records to your hosts file
+In linux and Mac OS it is located at `/etc/hosts` and at `c:\Windows\System32\Drivers\etc\hosts` for Windows
 
 ```
 127.0.0.1 hc-solutions.local
+127.0.0.1 app.hc-solutions.local
 127.0.0.1 traefik.hc-solutions.local
 127.0.0.1 api.hc-solutions.local
 127.0.0.1 ms.hc-solutions.local
 ```
 
-После этого можно поднимать все окружение через `docker-compose up -d`
-Изменения во фронте автоматически будут подтягиваться в контейнер -> будут видны сразу
+After that you could run project with docker-compose: `docker-compose up -d`
+Hot-reload for frontend and backend is enabled by default and work well on Linux and MacOS,
+but you could face some troubles when installing same project on Windows.
 
-`hc-solutions.local` - фронтенд на VueJS \
-`traefik.hc-solutions.local` - Reverse Proxy \
-`api.hc-solutions.local` - Бэкенд на Python \
-`ms.hc-solutions.local` - Поисковое ядро
+**Please check your git settings and be aware of proper CR and LF DOS line endings!**
 
-------
-
-# RoadMap ( в общем виде )
-1. Привести в порядок env-переменные
-2. Очистить код бэка от неиспользуемых элементов
-3. Сделать внешний сайт (лендинг)
-4. Доделать админ панель
-5. Выкатить MVP в виде трекера анализов и сроков годность пациентов
-6. Задеплоить ее в кубернетисе
-7. Сделать новую сборку для локальной установки
-8. Сделать сборку, которая будет ставиться на bare-metal у клиентов
-9. Развивать проект дальше, сделать ERP для клиники / больницы
+`hc-solutions.local` - VueJS Frontend with Argon libraries \
+`app.hc-solutions.local` - VueJS Admin panel with Argon libraries \
+`traefik.hc-solutions.local` - Reverse Proxy for local development \
+`api.hc-solutions.local` - FastAPI Backend in Python \
+`ms.hc-solutions.local` - Meilisearch, fast and tiny search engine

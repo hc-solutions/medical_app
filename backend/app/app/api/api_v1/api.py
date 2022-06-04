@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 
 from app.api.api_v1.endpoints import (
-    medical_items,
+    diseases,
     items,
     login,
-    users,
-    utils,
+    medical_items,
     patients,
     procedures,
-    diseases,
+    users,
+    utils,
 )
 
 api_router = APIRouter()

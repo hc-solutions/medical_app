@@ -1,6 +1,6 @@
 import datetime
 import uuid
-from typing import Optional, List
+from typing import List, Optional
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import and_, func
@@ -8,11 +8,11 @@ from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
 from app.models.patients import (
+    MedicalRecords,
+    PatientAppointments,
     Patients,
     Procedures,
-    MedicalRecords,
     ProceduresRecords,
-    PatientAppointments,
 )
 from app.schemas import PatientCreate, PatientUpdate
 

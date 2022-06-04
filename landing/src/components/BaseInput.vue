@@ -103,7 +103,7 @@ export default {
   computed: {
     listeners() {
       return {
-        ...this.$listeners,
+        ...this.listeners,
         input: this.updateValue,
         focus: this.onFocus,
         blur: this.onBlur
