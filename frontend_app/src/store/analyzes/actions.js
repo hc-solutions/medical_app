@@ -1,3 +1,5 @@
+import axiosInstance from "@/axios.js";
+
 export default {
   loadAnalyzes: {
     global: true,
