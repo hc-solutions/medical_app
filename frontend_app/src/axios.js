@@ -13,16 +13,17 @@ const axiosInstance = axios.create({
   headers: { Authorization: `Bearer ${accessToken}` },
 });
 
-let benignStatusesRange = {
-  min: 200,
-  max: 299,
-};
-
-benignStatusesRange = new Proxy(benignStatusesRange, {
-  has(proxiedObj, prop) {
-    return prop >= proxiedObj.min && prop <= proxiedObj.max;
+const benignStatusesRange = new Proxy(
+  {
+    min: 200,
+    max: 299,
   },
-});
+  {
+    has(proxiedObj, prop) {
+      return prop >= proxiedObj.min && prop <= proxiedObj.max;
+    },
+  }
+);
 
 const mostRecentRequestInfo = [];
 mostRecentRequestInfo.peek = function () {
