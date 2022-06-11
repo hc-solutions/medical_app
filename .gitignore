@@ -5,4 +5,4 @@
 /database/postgres/
 */node_modules/
 .DS_Store
-frontend_app/yarn-error.log
+*/yarn-error.log

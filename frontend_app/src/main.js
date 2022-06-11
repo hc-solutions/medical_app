@@ -18,6 +18,9 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
+
+// this bitch is recursive!!!!!!
+// it actually installs a TON
 import ArgonDashboard from "./plugins/argon-dashboard";
 import "element-plus/lib/theme-chalk/index.css";
 
