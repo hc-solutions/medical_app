@@ -9,7 +9,7 @@ RUN mkdir -p /usr/src/cache
 
 WORKDIR /usr/src/cache
 COPY package*.json ./
-RUN npm install
+RUN yarn install
 
 COPY ./ /app/
 WORKDIR /app
