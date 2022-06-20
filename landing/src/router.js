@@ -4,7 +4,6 @@ import AppHeader from "./layout/AppHeader";
 import AppFooter from "./layout/AppFooter";
 import Landing from "./views/Landing.vue";
 
-
 Vue.use(Router);
 
 export default new Router({

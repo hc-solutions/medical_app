@@ -1,9 +1,9 @@
-from typing import List, Any
+from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app import schemas, crud, models
+from app import crud, models, schemas
 from app.api import deps
 from app.schemas import PatientAppointment
 

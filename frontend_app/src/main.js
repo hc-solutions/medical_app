@@ -22,7 +22,7 @@ import router from "./router";
 // this bitch is recursive!!!!!!
 // it actually installs a TON
 import ArgonDashboard from "./plugins/argon-dashboard";
-import "element-plus/lib/theme-chalk/index.css";
+import "element-plus/theme-chalk/index.css";
 
 const appInstance = createApp(App);
 appInstance.use(router);
